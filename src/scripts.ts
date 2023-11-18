@@ -64,10 +64,11 @@ class Game {
   private gameWon = false; // boolean to check if the all cards match!
 
   // Store stats after winning / losing
-  private fastestTime = 0;
+  private fastestTime:number | string;
   constructor() {
     this.state = 'MENU'; // set the state as in menu
     this.initMenu(); // create the menu / make the button and menu-box
+    this.fastestTime = 'TBD';
   }
 
   initMenu() {
@@ -97,6 +98,9 @@ class Game {
     this.cardArray = []; // clear the array
     this.passedTime = 0; // set the time to zero
     this.gameWon = false; // set the win checker to false
+    this.timerId = null; // set the id to be null
+
+    this.loadData();
 
     this.game.classList.add('game-box-gui'); // so the game box is bigger
 
@@ -183,16 +187,17 @@ class Game {
 
   checkWinState() {
     // checks if every card has a the same value aka boolean here and if does returns a boolean
-    if (this.moveAmount <= 0) {
-      this.state = 'LOSE'; // last the game becasue ran out of moves
-    }
     const allMatch = this.cardArray.every((card) => card.foundMatch);
-    if (allMatch && !this.gameWon) {
+    if ((allMatch && !this.gameWon) || (allMatch && this.moveAmount <= 0)) {
+      if (this.fastestTime === 'TBD') this.fastestTime = this.passedTime;
+      // eslint-disable-next-line max-len
+      if (typeof this.fastestTime === 'number') this.fastestTime = this.passedTime < this.fastestTime ? this.passedTime : this.fastestTime; // set it so can store it and maybe save it
       this.stopTime(); // stops the timer
       this.points += 1; // add a point for winning
       this.gameWon = true; // set the game as won!
       this.state = 'WON'; // set the state as won
-      console.log("YOU WON!");
+    } else if (this.moveAmount <= 0 && !allMatch) {
+      this.state = 'LOSE'; // last the game becasue ran out of moves
     }
 
     if (this.state === 'LOSE' || this.state === 'WON') {
@@ -210,10 +215,19 @@ class Game {
       button.textContent = `YOU ${this.state === 'WON' ? 'WON!' : 'LOST!'}`;
       wonLoseDiv.appendChild(button);
 
+      const wins = document.createElement('div');
+      wins.className = 'won-lose-stats';
+      wins.textContent = `You have won ${this.points} times!`;
+
+      const bestTime = document.createElement('div');
+      bestTime.className = 'won-lose-stats';
+      bestTime.textContent = `Your best time is: ${this.fastestTime} ${this.fastestTime !== 'TBD' ? 'seconds!' : ''}`;
+
+      wonLoseDiv.appendChild(wins);
+      wonLoseDiv.appendChild(bestTime);
+
       this.game.appendChild(wonLoseDiv); // add it to the game container
-      if (this.gameWon) {
-        this.fastestTime = this.passedTime; // set it so can store it and maybe save it
-      }
+      this.saveData();
     }
   }
 
@@ -224,7 +238,7 @@ class Game {
 
         const card = document.getElementById(`c-${cardId}`); // get the card with the id
 
-        if (card !== undefined) {
+        if (card) {
           card.addEventListener('mouseover', () => {
             this.currentCard = `c-${cardId}`; // sets the currentCard id as the current card that its on!
 
@@ -239,9 +253,8 @@ class Game {
           }); // check if the mouse is over the card
         }
       }
-
-      this.handleCardClick(); // check when the card is clicked upon
       this.checkWinState(); // check if you have won the game
+      this.handleCardClick(); // check when the card is clicked upon
       this.updateStats();
       this.draw(); // update drawing the cards
     } // tbh might be removed
@@ -281,10 +294,23 @@ class Game {
       }
     }
   }
+
+  saveData() {
+    localStorage.setItem('GameData', JSON.stringify({
+      wins: this.points,
+      bestTime: this.fastestTime,
+    }));
+  }
+
+  loadData() {
+    const gameData = JSON.parse(localStorage.getItem('GameData')) as {wins: number, bestTime: number};
+    this.points = gameData.wins ? gameData.wins : 0;
+    this.fastestTime = gameData.bestTime ? gameData.bestTime : 'TBD';
+  }
 }
 const myGame = new Game(); // init game it self
 
-// Idk i tried to limit the frame rate / update time, but idk doesnt seem to be working :C
+// Idk i tried to limit the frame rate / update time, but idk doesnt seem to be working
 const target = 30;
 const delay = 1000 / target;
 
