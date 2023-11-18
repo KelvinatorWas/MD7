@@ -1,0 +1,159 @@
+
+body {
+  background-color: white;
+}
+
+.game-box {
+  display: flex;
+  justify-content: center;
+}
+
+#game {
+  width: 881px;
+  height: 791px;
+  border-radius: 40px;
+  background-color: #D9D9D9;
+}
+
+#game.game-box-gui {
+  height: 990px;
+}
+
+.stat-box {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr; 
+  width: 817px;
+  height: 64px;
+  border-radius: 40px 40px 0px 0px;
+  background-color: silver;
+  padding: 32px;
+}
+
+.win-moves-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-wins, .stat-time, .stat-moves {
+  color: #301561;
+  font-family: 'Press Start 2P';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal; 
+  margin-bottom: 20px;
+  //text-rendering: geometricPrecision;
+}
+
+.stat-wins, .stat-moves{
+  grid-row: 1 / 1;
+  grid-column: 1 / 2;
+}
+
+.stat-moves {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+
+.menu-box {
+  padding-top: 200px;
+  display: flex;
+  justify-content: center;
+}
+
+
+.btn-start-game {
+  width: 507px;
+  height:181px;
+  border-radius: 20px;
+  border: 3px solid #F00;
+  background-color: transparent;
+
+  color: #FFF;
+  font-family: 'Inter';
+  font-size: 64px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal; 
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.card-box {
+  display: grid;
+  margin-top: 65px;
+  margin-left: 53px;
+  grid-template-columns: repeat(3, 219px);
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 59px;
+  grid-row-gap: 64px; 
+}
+
+.card-down, .card-flip{
+  //background: url('assets/images/card.png');
+  //background-size: 100%;
+  display: inline-block;
+  width: 219px;
+  height: 267px;
+  border-radius: 30px;
+  background-color: silver;
+  border: 5px solid #F00;
+  //image-rendering: pixelated;
+  cursor: pointer;
+
+  text-align: center;
+  line-height: 150px; /* Vertically center the text */
+  color: #FFF;
+  font-family: 'Inter';
+  font-size: 64px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+@keyframes unflip {
+  from {
+    transform: rotateY(180deg);
+  }
+  to {
+    transform: rotateY(0deg);
+  }
+}
+
+.card-down {
+  background-image:linear-gradient(to bottom, #301561, #100e26);
+  animation: unflip 0.5s;
+}
+
+@keyframes flip {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+.card-flip {
+  background-color: black;
+  background-image: none;
+  transform-style: preserve-3d;
+  animation: flip 0.5s;
+}
+
+.card-up {
+  width: 219px;
+  height: 267px;
+  border-radius: 30px;
+  background-color:silver;
+  border: 5px solid #F00;
+  transform: rotateY(0deg);
+}
+
+.won-lose-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 34px;
+}
